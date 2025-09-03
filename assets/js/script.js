@@ -1,43 +1,52 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const prevButton = document.getElementById('prev-btn');
-    const nextButton = document.getElementById('next-btn');
-    const cards = document.querySelectorAll('.card');
+window.addEventListener('load', function () {
+    setTimeout(function () {
+        document.body.classList.add('page-loaded');
+        animateWords();
+    }, 800);
+});
 
-    let currentIndex = 0; 
+function animateWords() {
+    const line1 = document.getElementById('line1');
+    const line2 = document.getElementById('line2');
+    const setupLineAnimation = (element, baseDelay) => {
+        const text = element.textContent;
+        const words = text.split(' ');
+        element.innerHTML = '';
 
-    const stateClasses = ['card-prev', 'card-active', 'card-next', 'card-upcoming', 'card-hidden'];
+        words.forEach((word, index) => {
+            const span = document.createElement('span');
+            span.textContent = word + ' '; 
+            span.style.animationDelay = `${baseDelay + index * 0.15}s`;
+            element.appendChild(span);
+        });
+    };
 
-    function updateCards() {
-        cards.forEach((card, index) => {
-            card.classList.remove(...stateClasses);
-            const newPosition = (index - currentIndex + cards.length) % cards.length;
-            switch (newPosition) {
-                case 0:
-                    card.classList.add('card-active');
-                    break;
-                case 1:
-                    card.classList.add('card-next');
-                    break;
-                case 2:
-                    card.classList.add('card-upcoming');
-                    break;
-                case cards.length - 1:
-                    card.classList.add('card-prev');
-                    break;
-                default:
-                    card.classList.add('card-hidden');
-                    break;
+    setupLineAnimation(line1, 0.4);
+    setupLineAnimation(line2, 0.8);
+}
+
+// --- INTERSECTION OBSERVER FOR SCROLL ANIMATIONS ---
+document.addEventListener('DOMContentLoaded', () => {
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observerCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+            } 
+            else {
+                entry.target.classList.remove('in-view');
             }
         });
-    }
-    nextButton.addEventListener('click', () => {
-        currentIndex = (currentIndex + 1) % cards.length;
-        updateCards();
-    });
+    };
 
-    prevButton.addEventListener('click', () => {
-        currentIndex = (currentIndex - 1 + cards.length) % cards.length;
-        updateCards();
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const elementsToAnimate = document.querySelectorAll('.animate-on-scroll');
+    elementsToAnimate.forEach(element => {
+        observer.observe(element);
     });
-    updateCards();
 });

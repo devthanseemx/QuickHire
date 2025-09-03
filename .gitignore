@@ -3,3 +3,5 @@
 
 # Ignore IDE/editor config files
 .vscode
+
+.demo

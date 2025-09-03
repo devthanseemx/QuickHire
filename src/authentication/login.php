@@ -68,5 +68,4 @@
   <script src="../../assets/js/login-validation.js"></script>
 
 </body>
-
 </html>
