@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+body{
+    font-family: 'Inter', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.scroll-hidden::-webkit-scrollbar {
+    display: none;
+    overflow-y: scroll;
+}
+
+@config "../tailwind.config.js"
+
