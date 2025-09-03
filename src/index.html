@@ -40,8 +40,10 @@
 
                                 <div x-show="open" @click.away="open = false"
                                     class="absolute mt-2 w-40 rounded-xl bg-white/20 backdrop-blur-md shadow-lg p-3 space-y-2">
-                                    <a href="#footer" class="block px-3 py-1 rounded-md hover:bg-white/30">Contact Us</a>
-                                    <a href="authentication/verify-id.php" class="block px-3 py-1 rounded-md hover:bg-white/30">Office Use</a>
+                                    <a href="#footer" class="block px-3 py-1 rounded-md hover:bg-white/30">Contact
+                                        Us</a>
+                                    <a href="authentication/verify-id.php"
+                                        class="block px-3 py-1 rounded-md hover:bg-white/30">Office Use</a>
                                 </div>
                             </li>
                         </ul>
@@ -55,28 +57,54 @@
                         </div>
 
                         <!-- Mobile Burger -->
-                        <button id="menu-btn" class="md:hidden text-3xl">
-                            <i class="bi bi-list"></i>
-                        </button>
-                    </nav>
+                        <div x-data="{ open: false }" class="relative">
+                            <!-- Menu Button -->
+                            <button @click="open = true" class="md:hidden text-3xl z-50 relative">
+                                <i class="bi bi-list"></i>
+                            </button>
 
-                    <!-- Mobile Dropdown -->
-                    <div id="menu" class="hidden mt-4 bg-black/20 p-6 rounded-lg md:hidden">
-                        <div class="grid grid-cols-2 gap-4 text-left">
-                            <a href="#services" class="hover:underline">Services</a>
-                            <a href="#how-it-works" class="hover:underline">How it Works</a>
-                            <a href="#about-us" class="hover:underline">About Us</a>
-                            <a href="#footer" class="hover:underline">Contact Us</a>
+                            <!-- Overlay -->
+                            <div x-show="open" x-transition x-cloak @click.outside="open = false"
+                                class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 flex justify-start items-start p-4 overflow-hidden">
+
+                                <!-- Sidebar -->
+                                <aside
+                                    class="w-64 bg-black/40 backdrop-blur-md rounded-xl shadow-lg flex flex-col justify-between p-6 h-full"
+                                    @click.stop>
+                                    <!-- Site Name -->
+                                    <div class="text-2xl font-bold mb-8">QuickHire</div>
+
+                                    <!-- Navigation Links -->
+                                    <nav class="flex flex-col space-y-4">
+                                        <a href="#services" class="px-3 py-2 rounded hover:bg-white/20">Services</a>
+                                        <a href="#how-it-works" class="px-3 py-2 rounded hover:bg-white/20">How it
+                                            Works</a>
+                                        <a href="#about-us" class="px-3 py-2 rounded hover:bg-white/20">About Us</a>
+                                        <a href="#contact-us" class="px-3 py-2 rounded hover:bg-white/20">Contact Us</a>
+                                    </nav>
+
+                                    <!-- Login Button -->
+                                    <div class="mt-6">
+                                        <a href="authentication/login.php"
+                                            class="flex items-center justify-center px-4 py-2 bg-white/20 backdrop-blur-md rounded hover:bg-white/30 transition">
+                                            <i class="bi bi-box-arrow-in-right mr-2"></i>
+                                            Login
+                                        </a>
+                                    </div>
+                                </aside>
+                            </div>
+
+                            <!-- Disable page scrolling when sidebar is open -->
+                            <template x-if="open">
+                                <style>
+                                    body {
+                                        overflow: hidden;
+                                    }
+                                </style>
+                            </template>
                         </div>
 
-                        <!-- Login row below the grid -->
-                        <div class="flex items-center justify-center space-x-3 pt-6 border-t border-gray-600 mt-6">
-                            <a href="authentication/login.php" class="flex items-center space-x-2 cursor-pointer">
-                                <i class="bi bi-box-arrow-in-right"></i>
-                                <label class="cursor-pointer">Login</label>
-                            </a>
-                        </div>
-                    </div>
+
 
                 </header>
 
