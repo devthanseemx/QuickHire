@@ -32,11 +32,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['login_success'] = 'Login successful';
 
             if ($user['user_type'] === 'admin') {
-                $dashboard = '../layouts/admin/admin_dashboard.php';
+                $dashboard = '../layouts/admin/dashboard.php';
             } elseif ($user['user_type'] === 'employee') {
-                $dashboard = '../layouts/employee/employee_dashboard.php';
+                $dashboard = '../layouts/employee/dashboard.php';
             } else {
-                $dashboard = '../layouts/user/user_dashboard.php';
+                $dashboard = '../layouts/user/dashboard.php';
             }
 
             $response = [

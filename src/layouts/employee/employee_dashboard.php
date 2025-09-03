@@ -22,7 +22,7 @@ $username = htmlspecialchars($_SESSION['username']);
 </head>
 
 <body class="bg-gray-100 flex items-center justify-center h-screen">
-    <?php include '../partials/dashboard-loading.html'; ?>
+    <?php include '../partials/dashboard-loading.html'; require_once '../partials/session_toast.php'; showLoginSuccessToast();?>
     <div class="bg-white p-12 rounded-lg shadow-lg text-center">
         <?php echo ($_SESSION['user_type']) ?>
         <h1 class="text-3xl font-bold text-gray-800">Welcome to the Dashboard!</h1>
