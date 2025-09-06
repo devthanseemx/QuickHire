@@ -1,23 +1,29 @@
 <?php
-
 session_start();
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" href="../../../dist/output.css">
-    <link rel="stylesheet" href="../../../dist/main.css">
-    <meta http-equiv="refresh" content="1.5;url=login.php">
-    <title>Logging Out...</title>
-</head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
-    <?php include '../layouts/partials/dashboard-loading.html'; ?>
-    <script>
-        setTimeout(function() {
-            // Clear session via AJAX or PHP
-            fetch('logout-action.php', { method: 'POST' })
-                .finally(() => window.location.href = 'login.php');
-        }, 1200);
-    </script>
-</body>
-</html>
+$_SESSION = [];
+
+if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(
+        session_name(),
+        '',
+        time() - 42000,
+        $params["path"],
+        $params["domain"],
+        $params["secure"],
+        $params["httponly"]
+    );
+}
+session_destroy();
+
+// --- THE IMPORTANT PART ---
+session_start(); // Start a new session
+
+$_SESSION['flash_message'] = [
+    'type' => 'success',
+    'message' => 'You have been logged out.',
+    'description' => 'Please log in again to continue.'
+];
+
+header("Location: login.php"); // Temporarily disabled
+exit; // Temporarily disabled

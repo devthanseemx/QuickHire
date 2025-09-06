@@ -10,7 +10,7 @@ if (in_array($activePage, ['profile', 'skills-portfolio'])) {
 ?>
 
 
-<aside 
+<aside
     class="fixed inset-y-0 left-0 z-40 flex flex-col flex-shrink-0 w-64 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0"
     :class="{
         'translate-x-0': isMobileMenuOpen,
@@ -18,8 +18,7 @@ if (in_array($activePage, ['profile', 'skills-portfolio'])) {
         'lg:w-64': isSidebarOpen,
         'lg:w-20': !isSidebarOpen
     }"
-    x-cloak
->
+    x-cloak>
     <!-- Sidebar Header with Logo -->
     <div class="flex items-center justify-between h-16 px-4 flex-shrink-0">
         <a href="dashboard.php?page=dashboard" class="flex items-center space-x-3">
@@ -41,7 +40,7 @@ if (in_array($activePage, ['profile', 'skills-portfolio'])) {
                 </a>
             </div>
         </div>
-        
+
         <!-- CATEGORY: Account -->
         <div class="px-3 mb-4">
             <span x-show="isSidebarOpen" class="px-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Account</span>
@@ -59,11 +58,12 @@ if (in_array($activePage, ['profile', 'skills-portfolio'])) {
             </div>
         </div>
     </nav>
-    
+
     <!-- Sidebar Footer with Minimize Button (ONLY visible on desktop) -->
     <div class="hidden lg:flex flex-shrink-0 p-3 border-t border-gray-200">
-        <button @click="isSidebarOpen = !isSidebarOpen" class="w-full flex items-center justify-end p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-800">
+        <button @click="isSidebarOpen = !isSidebarOpen" class="w-full flex items-center p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-800" :class="isSidebarOpen ? 'justify-end' : 'justify-center'">
             <i class="bi bi-chevron-double-left text-lg transition-transform duration-300" :class="{ 'rotate-180': !isSidebarOpen }"></i>
         </button>
     </div>
+
 </aside>

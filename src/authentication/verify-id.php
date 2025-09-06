@@ -50,7 +50,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION['verified_id'] = $provided_id;
         $_SESSION['user_type'] = $user_type;
 
-        echo json_encode(['status' => 'success', 'message' => 'ID Verified! Redirecting you now...']);
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Verification complete',
+            'description' => 'Please continue with your registration details.'
+        ]);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'The provided ID was not found.']);
     }
@@ -134,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         if (res.status === 'error') {
                             $('#id-error').removeClass('hidden').text(res.message);
                         } else {
-                            showToast(res.message, "success");
+                            showToast(res.message, "success", res.description);
                             setTimeout(() => window.location.href = "register.php", 1500);
                         }
                     },

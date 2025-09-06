@@ -37,7 +37,7 @@ $(document).ready(function () {
 
     function handleServerResponse(data) {
         if (data.status === 'success') {
-            showToast(data.message, 'success');
+            showToast(data.message, 'success', data.description);
             $form[0].reset();
 
             // Trigger email queue sender via AJAX (non-blocking)

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$user_type = $_SESSION['user_type'] ?? 'user'; 
+$user_type = $_SESSION['user_type'] ?? 'user';
 $verified_id = $_SESSION['verified_id'] ?? null;
 
 ?>
@@ -95,11 +95,12 @@ $verified_id = $_SESSION['verified_id'] ?? null;
                     Sign Up
                 </button>
                 <p class="mt-6 text-sm text-center text-gray-500">
-          <a href="../index.html" class="text-indigo-600 hover:text-indigo-400 font-medium">Go Home</a>
-        </p>
+                    <a href="../index.html" class="text-indigo-600 hover:text-indigo-400 font-medium">Go Home</a>
+                </p>
             </form>
 
-            <hr class="my-8" />
+            <hr class="my-8 border-t border-gray-200" />
+
             <p class="mt-6 text-sm text-center text-gray-500">
                 Already have an account?
                 <a href="login.php" class="text-indigo-600 hover:underline font-medium">Sign in</a>

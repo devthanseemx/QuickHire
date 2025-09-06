@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
-                    showToast(data.message, "success");
+                    showToast(data.message, "success", data.description);
                     showSection('code');
 
                     // --- Trigger email queue sending via AJAX ---
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
-                    showToast(data.message, "success");
+                    showToast(data.message, "success", data.description);
                     showSection('reset');
                 } else {
                     showError(data.field, data.message);
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(data => {
                 if (data.status === "success") {
-                    showToast(data.message, "success");
+                    showToast(data.message, "success", data.description);
                     setTimeout(() => window.location.href = data.redirect, 2000);
                 } else {
                     showError(data.field, data.message);

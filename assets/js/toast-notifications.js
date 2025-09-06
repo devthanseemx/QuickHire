@@ -1,8 +1,4 @@
-/**
- * @param {string} message The message to display.
- * @param {string} type The type of toast ('success', 'error', or 'info').
- */
-function showToast(message, type = 'info') {
+function showToast(message, type = 'info', description = '') {
     const icons = {
         success: `
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#16a34a" stroke-width="2">
@@ -22,22 +18,32 @@ function showToast(message, type = 'info') {
     };
 
     const toastNode = document.createElement('div');
-    toastNode.className = 'flex items-center';
+    toastNode.className = 'flex items-start';
 
     const iconContainer = document.createElement('div');
     iconContainer.className = 'mr-3 flex-shrink-0';
     iconContainer.innerHTML = icons[type] || icons['info'];
 
-    const textElement = document.createElement('span');
+    const textContainer = document.createElement('div');
+
+    const textElement = document.createElement('div');
     textElement.textContent = message;
-    textElement.className = 'font-medium';
+    textElement.className = 'text-sm text-nowrap font-medium text-gray-900';
+    textContainer.appendChild(textElement);
+
+    if (description && description.trim() !== '') {
+        const descElement = document.createElement('div');
+        descElement.textContent = description;
+        descElement.className = 'text-xs text-gray-600 mt-1';
+        textContainer.appendChild(descElement);
+    }
 
     toastNode.appendChild(iconContainer);
-    toastNode.appendChild(textElement);
+    toastNode.appendChild(textContainer);
 
     Toastify({
         node: toastNode,
-        duration: 2000,
+        duration: 3000,
         gravity: "top",
         position: "right",
         stopOnFocus: true,
@@ -47,7 +53,8 @@ function showToast(message, type = 'info') {
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
             borderRadius: "8px",
             border: "1px solid #e5e7eb",
-            padding: "12px 20px"
+            padding: "12px 20px",
+            maxWidth: "320px"
         },
         offset: {
             x: 20,

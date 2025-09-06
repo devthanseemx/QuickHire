@@ -1,23 +1,41 @@
 <?php
 session_start();
+@include_once '../../../db/db.php';
 
+if (!isset($conn) || $conn->connect_error) {
+    die("Database Connection Failed. Check path and credentials. Error: " . ($conn->connect_error ?? 'File not found or $conn variable is missing.'));
+}
+
+// Check if the user is logged in, otherwise redirect to the login page
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header("Location: ../../authentication/login.php");
     exit;
 }
 
-$page = $_GET['page'] ?? 'dashboard';
-$activePage = $page;
+$activePage = $_GET['page'] ?? 'dashboard';
+$userId = $_SESSION['id'];
 
+if ($activePage === 'profile' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Include the logic file to handle the database update.
+    // This script will end with a redirect (header()) and exit(), so no further code will run.
+    require_once 'profile-logic.php';
+}
+
+if ($activePage === 'profile') {
+    require_once 'profile-logic.php';
+}
+
+// Set session variables for display in the template
 $_SESSION['user_name'] = $_SESSION['username'] ?? 'Guest';
 $_SESSION['user_type'] = $_SESSION['user_type'] ?? 'Worker';
 $_SESSION['profile_picture_url'] = $_SESSION['profile_picture_url'] ?? '';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard - QuickHire</title>
     <link rel="stylesheet" href="../../../dist/output.css">
     <link rel="stylesheet" href="../../../dist/main.css">
@@ -51,9 +69,9 @@ $_SESSION['profile_picture_url'] = $_SESSION['profile_picture_url'] ?? '';
             
             <main class="flex-grow overflow-y-auto p-4 sm:p-6 lg:p-8">
                 <?php
-                switch ($page) {
+                switch ($activePage) {
                     case 'profile':
-                        include '../partials/profile-content.php';
+                        include 'profile-content.php';
                         break;
                     case 'skills-portfolio':
                         include 'skills-content.php';

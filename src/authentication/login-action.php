@@ -25,11 +25,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $result->fetch_assoc();
 
         if (password_verify($password, $user['password'])) {
+            $description = 'Welcome back! You can now access your dashboard.'; 
+
             $_SESSION['loggedin'] = true;
             $_SESSION['id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['user_type'] = $user['user_type'];
-            $_SESSION['login_success'] = 'Login successful';
+
+            // --- MODIFICATION START ---
+            $_SESSION['login_success_message'] = 'Login successful';
+            $_SESSION['login_success_description'] = $description;
+            // --- MODIFICATION END ---
+
 
             if ($user['user_type'] === 'admin') {
                 $dashboard = '../layouts/admin/dashboard.php';
@@ -42,6 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $response = [
                 'status' => 'success',
                 'message' => 'Login successful',
+                'description' => $description,
                 'redirect' => $dashboard
             ];
         } else {

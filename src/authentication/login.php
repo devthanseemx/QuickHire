@@ -55,7 +55,8 @@
         </p>
       </form>
 
-      <hr class="my-8" />
+      <hr class="my-8 border-t border-gray-200" />
+
       <p class="mt-6 text-sm text-center text-gray-500">
         Don't have an account?
         <a href="register.php" class="text-indigo-400 hover:underline hover:text-indigo-600 font-medium">Sign up</a>
@@ -67,5 +68,7 @@
   <script src="../../assets/js/toast-notifications.js"></script>
   <script src="../../assets/js/login-validation.js"></script>
 
+  
 </body>
+
 </html>

@@ -46,7 +46,7 @@ $(document).ready(function () {
                 if (data.status === 'success') {
                     setTimeout(function () {
                         window.location.href = data.redirect;
-                    }, 200);
+                    }, 150);
                 } else {
                     if (data.field === 'username') {
                         showError($fields.username, $errors.username, data.message);

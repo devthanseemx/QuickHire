@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $stmt_role->close();
                     }
                     if ($role_insert_success) {
-                        $response = ['status' => 'success', 'message' => 'Registration successful!'];
+                        $response = ['status' => 'success', 'message' => 'Registration successful', 'description' => 'Your account has been created successfully.'];
 
                         $subject = "Welcome to QuickHire LK!";
                         $template = "confirmation";

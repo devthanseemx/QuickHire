@@ -6,9 +6,9 @@ header('Content-Type: application/json');
 require '../../db/db.php';
 require '../utils/sendMail.php';
 
-function json_response($status, $message, $field = null, $redirect = null)
+function json_response($status, $message, $description, $field = null, $redirect = null)
 {
-    $response = ['status' => $status, 'message' => $message];
+    $response = ['status' => $status, 'message' => $message, 'description'=> $description];
     if ($field) $response['field'] = $field;
     if ($redirect) $response['redirect'] = $redirect;
     echo json_encode($response);
@@ -31,8 +31,6 @@ switch ($action) {
     default:
         json_response('error', 'Invalid action specified.', 'email');
 }
-
-// --- FUNCTION DEFINITIONS (USING MYSQLI) ---
 
 function handle_send_code($conn)
 {
@@ -98,7 +96,8 @@ function handle_send_code($conn)
     $stmt_queue->execute();
     $stmt_queue->close();
 
-    json_response('success', 'Verification code sent');
+    json_response('success', 'Verification code sent', 'Please check your email inbox.');
+
 }
 
 function handle_verify_code($conn)
@@ -126,7 +125,8 @@ function handle_verify_code($conn)
     }
 
     $_SESSION['reset_email_verified'] = $email;
-    json_response('success', 'Code verified! Reset your password.');
+    json_response('success', 'Code verified', 'Please create a new password.');
+
 }
 
 function handle_reset_password($conn)
@@ -162,7 +162,7 @@ function handle_reset_password($conn)
 
     unset($_SESSION['reset_email_verified']);
 
-    json_response('success', 'Password updated successfully!', null, 'login.php');
+    json_response('success', 'Password updated successfully', null, null, 'login.php');
 }
 
 $conn->close();
