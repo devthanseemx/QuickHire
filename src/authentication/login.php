@@ -64,11 +64,10 @@
     </div>
   </div>
 
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-  <script src="../../assets/js/toast-notifications.js"></script>
+  <?php include '../layouts/partials/toast-notification.html' ?>
   <script src="../../assets/js/login-validation.js"></script>
 
-  
+
 </body>
 
 </html>

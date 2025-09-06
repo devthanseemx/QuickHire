@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmation & Toast Example</title>
+  <link rel="stylesheet" href="../../../dist/output.css">
+  <link rel="stylesheet" href="../../../dist/main.css">
+</head>
+
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+  <!-- Modal backdrop -->
+  <div id="confirmModal" class="hidden fixed inset-0 bg-black/40 bg-opacity-40 items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-lg p-6 max-w-md text-center">
+      <div class="flex justify-center mb-3 text-blue-500 text-4xl">
+        <i class="bi bi-question-circle-fill"></i>
+      </div>
+      <p id="confirmMessage" class="text-lg font-medium text-gray-900 mb-1">Are you sure you want to continue?</p>
+      <p id="confirmDescription" class="text-sm text-gray-600 mb-4 hidden"></p>
+      <div class="flex justify-center space-x-4">
+        <button id="yesBtn" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Yes</button>
+        <button id="noBtn" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toastify JS -->
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <script>
+    function showToast(message, type = 'info', description = '') {
+      const icons = {
+        success: `<i class="bi bi-check-circle-fill text-green-500 text-lg"></i>`,
+        error: `<i class="bi bi-x-circle-fill text-red-500 text-lg"></i>`,
+        info: `<i class="bi bi-info-circle-fill text-blue-500 text-lg"></i>`
+      };
+
+      const toastNode = document.createElement('div');
+      toastNode.className = 'flex items-center ';
+
+      const iconContainer = document.createElement('div');
+      iconContainer.className = 'mr-3 flex-shrink-0';
+      iconContainer.innerHTML = icons[type] || icons['info'];
+
+      const textContainer = document.createElement('div');
+
+      const textElement = document.createElement('div');
+      textElement.textContent = message;
+      textElement.className = 'text-sm text-nowrap font-medium text-gray-900';
+      textContainer.appendChild(textElement);
+
+      if (description && description.trim() !== '') {
+        const descElement = document.createElement('div');
+        descElement.textContent = description;
+        descElement.className = 'text-xs text-gray-600 mt-1';
+        textContainer.appendChild(descElement);
+      }
+
+      toastNode.appendChild(iconContainer);
+      toastNode.appendChild(textContainer);
+
+      Toastify({
+        node: toastNode,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        stopOnFocus: true,
+        style: {
+          background: "#ffffff",
+          color: "#1f2937",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          borderRadius: "8px",
+          border: "1px solid #e5e7eb",
+          padding: "12px 20px",
+          maxWidth: "320px"
+        },
+        offset: { x: 20, y: 20 },
+      }).showToast();
+    }
+
+    const confirmModal = document.getElementById("confirmModal");
+    const confirmMessage = document.getElementById("confirmMessage");
+    const confirmDescription = document.getElementById("confirmDescription");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+
+    function showConfirmation(message, description = '') {
+      confirmMessage.textContent = message;
+      if (description.trim() !== '') {
+        confirmDescription.textContent = description;
+        confirmDescription.classList.remove("hidden");
+      } else {
+        confirmDescription.classList.add("hidden");
+      }
+      confirmModal.classList.add("flex");
+      confirmModal.classList.remove("hidden");
+    }
+  </script>
+</body>
+
+</html>

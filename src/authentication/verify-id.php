@@ -114,8 +114,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </div>
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script src="../../assets/js/toast-notifications.js"></script>
+ 
+    <?php include '../layouts/partials/toast-notification.html' ?>
 
     <script>
         $(document).ready(function() {

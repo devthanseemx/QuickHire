@@ -18,17 +18,13 @@ $userId = $_SESSION['id'];
 if ($activePage === 'profile' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     // Include the logic file to handle the database update.
     // This script will end with a redirect (header()) and exit(), so no further code will run.
-    require_once 'profile-logic.php';
+    require_once 'process/profile-logic.php';
 }
 
 if ($activePage === 'profile') {
-    require_once 'profile-logic.php';
+    require_once 'process/profile-logic.php';
 }
 
-// Set session variables for display in the template
-$_SESSION['user_name'] = $_SESSION['username'] ?? 'Guest';
-$_SESSION['user_type'] = $_SESSION['user_type'] ?? 'Worker';
-$_SESSION['profile_picture_url'] = $_SESSION['profile_picture_url'] ?? '';
 
 ?>
 <!DOCTYPE html>
@@ -39,6 +35,7 @@ $_SESSION['profile_picture_url'] = $_SESSION['profile_picture_url'] ?? '';
     <title>User Dashboard - QuickHire</title>
     <link rel="stylesheet" href="../../../dist/output.css">
     <link rel="stylesheet" href="../../../dist/main.css">
+    <script src="../../../assets//js//jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="../../../assets/js/toast-notifications.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">

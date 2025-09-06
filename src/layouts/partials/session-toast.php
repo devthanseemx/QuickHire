@@ -1,10 +1,10 @@
 <?php
+include 'toast-notification.html';
+
 function showLoginSuccessToast() {
     if (isset($_SESSION['login_success_message'])) {
         // Get the description, default to empty string if not set
-        $description = $_SESSION['login_success_description'] ?? '';
-
-        echo '<script src="../../../assets/js/toast-notifications.js"></script>';
+        $description = $_SESSION['login_success_description'] ?? '';  
         echo '<script>
                 showToast(
                     "' . addslashes($_SESSION['login_success_message']) . '", 
