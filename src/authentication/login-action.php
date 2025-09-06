@@ -25,18 +25,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $result->fetch_assoc();
 
         if (password_verify($password, $user['password'])) {
-            $description = 'Welcome back! You can now access your dashboard.'; 
-
             $_SESSION['loggedin'] = true;
             $_SESSION['id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['user_type'] = $user['user_type'];
-
-            // --- MODIFICATION START ---
-            $_SESSION['login_success_message'] = 'Login successful';
-            $_SESSION['login_success_description'] = $description;
-            // --- MODIFICATION END ---
-
 
             if ($user['user_type'] === 'admin') {
                 $dashboard = '../layouts/admin/dashboard.php';
@@ -45,13 +37,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 $dashboard = '../layouts/user/dashboard.php';
             }
-
+            
             $response = [
                 'status' => 'success',
-                'message' => 'Login successful',
-                'description' => $description,
-                'redirect' => $dashboard
+                'redirect' => $dashboard . '?login=success'
             ];
+
         } else {
             $response = ['status' => 'error', 'field' => 'password', 'message' => 'Incorrect password.'];
         }
@@ -61,7 +52,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $stmt->close();
 }
-
 
 $conn->close();
 echo json_encode($response);

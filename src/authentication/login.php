@@ -64,10 +64,29 @@
     </div>
   </div>
 
-  <?php include '../layouts/partials/toast-notification.html' ?>
+
+
   <script src="../../assets/js/login-validation.js"></script>
+  <?php
+  include '../layouts/partials/toast-notification.html';
 
+  if (isset($_GET['logout']) && $_GET['logout'] === 'success') {
+      echo '<script>
+              window.addEventListener("load", function() {
+                  showToast(
+                      "Logout Successful", 
+                      "success", 
+                      "You have been securely logged out."
+                  );
 
+                  if (window.history.replaceState) {
+                      const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                      window.history.replaceState({path: cleanUrl}, "", cleanUrl);
+                  }
+              });
+            </script>';
+  }
+  ?>
 </body>
 
 </html>
