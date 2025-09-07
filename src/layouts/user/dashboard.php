@@ -1,27 +1,19 @@
 <?php
 session_start();
-@include_once '../../../db/db.php';
+require_once '../../../db/db.php';
 
+// Check for database connection success
 if (!isset($conn) || $conn->connect_error) {
-    die("Database Connection Failed. Check path and credentials. Error: " . ($conn->connect_error ?? 'File not found or $conn variable is missing.'));
+    die("Database Connection Failed: " . $conn->connect_error);
 }
 
+// Check if user is logged in
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header("Location: ../../authentication/login.php");
     exit;
 }
 
-$activePage = $_GET['page'] ?? 'dashboard';
 $userId     = $_SESSION['id'];
-
-if ($activePage === 'profile' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_once 'process/profile-logic.php';
-}
-
-if ($activePage === 'profile') {
-    require_once 'process/profile-logic.php';
-}
-
 
 ?>
 <!DOCTYPE html>
@@ -33,7 +25,7 @@ if ($activePage === 'profile') {
     <title>User Dashboard - QuickHire</title>
     <link rel="stylesheet" href="../../../dist/output.css">
     <link rel="stylesheet" href="../../../dist/main.css">
-    <script src="../../../assets//js//jquery-3.7.1.min.js"></script>
+    <script src="../../../assets/js/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
@@ -58,19 +50,7 @@ if ($activePage === 'profile') {
             <?php include '../partials/topbar.php'; ?>
 
             <main class="flex-grow overflow-y-auto p-4 sm:p-6 lg:p-8">
-                <?php
-                switch ($activePage) {
-                    case 'profile':
-                        include 'profile-content.php';
-                        break;
-                    case 'skills-portfolio':
-                        include 'skills-content.php';
-                        break;
-                    default:
-                        include 'dashboard-content.php';
-                        break;
-                }
-                ?>
+              
             </main>
         </div>
     </div>
@@ -79,12 +59,14 @@ if ($activePage === 'profile') {
     include '../partials/toast-notification.html';
     if (isset($_GET['login']) && $_GET['login'] === 'success') {
         echo '<script>
-                    showToast(
-                        "Login Successful", 
-                        "success", 
-                        "Welcome back! You can now access your dashboard."
-                    );
-                  </script>';
+                document.addEventListener("DOMContentLoaded", function() {
+                    showToast( "Login Successful", "success", "Welcome back! You can now access your dashboard." );
+                    if (window.history.replaceState) {
+                        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?page=' . $activePage . '";
+                        window.history.replaceState({path: cleanUrl}, "", cleanUrl);
+                    }
+                });
+              </script>';
     }
     ?>
 </body>

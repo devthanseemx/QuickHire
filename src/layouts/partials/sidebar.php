@@ -1,15 +1,3 @@
-<?php
-// This PHP block determines which category should be open by default based on the active page.
-$openCategory = '';
-if (in_array($activePage, ['dashboard'])) { // Add any other overview pages here
-    $openCategory = 'overview';
-}
-if (in_array($activePage, ['profile', 'skills-portfolio'])) {
-    $openCategory = 'account';
-}
-?>
-
-
 <aside
     class="fixed inset-y-0 left-0 z-40 flex flex-col flex-shrink-0 w-64 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0"
     :class="{
@@ -50,7 +38,7 @@ if (in_array($activePage, ['profile', 'skills-portfolio'])) {
                     <span x-show="isSidebarOpen" class="ml-3">Profile</span>
                     <span x-show="!isSidebarOpen" class="absolute left-full ml-4 px-2 py-1 text-sm font-medium text-white bg-gray-900 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">Profile</span>
                 </a>
-                <a href="dashboard.php?page=skills-portfolio" @click="isMobileMenuOpen = false" class="group relative flex items-center py-2 text-sm font-medium rounded-md <?php echo ($activePage === 'skills-portfolio') ? 'bg-violet-100 text-violet-700' : 'text-gray-600 hover:bg-gray-100'; ?>" :class="isSidebarOpen ? 'px-3' : 'justify-center'">
+                <a href="dashboard.php?page=skills-view" @click="isMobileMenuOpen = false" class="group relative flex items-center py-2 text-sm font-medium rounded-md <?php echo ($activePage === 'skills-view') ? 'bg-violet-100 text-violet-700' : 'text-gray-600 hover:bg-gray-100'; ?>" :class="isSidebarOpen ? 'px-3' : 'justify-center'">
                     <i class="bi bi-briefcase-fill text-base"></i>
                     <span x-show="isSidebarOpen" class="ml-3">Skills & Portfolio</span>
                     <span x-show="!isSidebarOpen" class="absolute left-full ml-4 px-2 py-1 text-sm font-medium text-white bg-gray-900 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">Skills & Portfolio</span>

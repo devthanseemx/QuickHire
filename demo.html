@@ -1,0 +1,143 @@
+<?php
+// This file assumes $conn and $userId are available.
+
+// --- HANDLE FORM SUBMISSION (UPDATE LOGIC) ---
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $conn->begin_transaction();
+    try {
+        // --- 1. Update Preferences ---
+        $sql_prefs = "INSERT INTO user_preferences (user_account_id, preferred_location, working_hours, hourly_rate, availability) VALUES (?, ?, ?, ?, ?)
+                      ON DUPLICATE KEY UPDATE preferred_location = VALUES(preferred_location), working_hours = VALUES(working_hours), hourly_rate = VALUES(hourly_rate), availability = VALUES(availability)";
+        $stmt_prefs = $conn->prepare($sql_prefs);
+        $prefs_data = json_decode($_POST['preferences_json'], true);
+        $stmt_prefs->bind_param("issds", $userId, $prefs_data['preferred_location'], $prefs_data['working_hours'], $prefs_data['hourly_rate'], $prefs_data['availability']);
+        $stmt_prefs->execute();
+        $stmt_prefs->close();
+
+        // --- 2. Update Dynamic Lists (Delete-Then-Insert) ---
+        // SKILLS
+        $conn->query("DELETE FROM user_skills WHERE user_account_id = $userId");
+        $skills = json_decode($_POST['skills_json'], true);
+        if (!empty($skills)) {
+            $stmt_skill = $conn->prepare("INSERT INTO user_skills (user_account_id, skill_name) VALUES (?, ?)");
+            foreach ($skills as $skill) {
+                $stmt_skill->bind_param("is", $userId, $skill);
+                $stmt_skill->execute();
+            }
+            $stmt_skill->close();
+        }
+
+        // WORK EXPERIENCE
+        $conn->query("DELETE FROM user_work_experience WHERE user_account_id = $userId");
+        $experiences = json_decode($_POST['workExperience_json'], true);
+        if (!empty($experiences)) {
+            $stmt_exp = $conn->prepare("INSERT INTO user_work_experience (user_account_id, job_title, company_name, dates, responsibilities) VALUES (?, ?, ?, ?, ?)");
+            foreach ($experiences as $exp) {
+                $stmt_exp->bind_param("issss", $userId, $exp['title'], $exp['company'], $exp['dates'], $exp['responsibilities']);
+                $stmt_exp->execute();
+            }
+            $stmt_exp->close();
+        }
+
+        // EDUCATION
+        $conn->query("DELETE FROM user_education WHERE user_account_id = $userId");
+        $educations = json_decode($_POST['education_json'], true);
+        if (!empty($educations)) {
+            $stmt_edu = $conn->prepare("INSERT INTO user_education (user_account_id, degree_or_certificate, institution, year_of_completion) VALUES (?, ?, ?, ?)");
+            foreach ($educations as $edu) {
+                $stmt_edu->bind_param("isss", $userId, $edu['degree'], $edu['institution'], $edu['year']);
+                $stmt_edu->execute();
+            }
+            $stmt_edu->close();
+        }
+
+        // PORTFOLIO LINKS
+        $conn->query("DELETE FROM user_portfolio_links WHERE user_account_id = $userId");
+        $links = json_decode($_POST['portfolioLinks_json'], true);
+        if (!empty($links)) {
+            $stmt_link = $conn->prepare("INSERT INTO user_portfolio_links (user_account_id, project_title, project_url, description) VALUES (?, ?, ?, ?)");
+            foreach ($links as $link) {
+                $stmt_link->bind_param("isss", $userId, $link['title'], $link['url'], $link['description']);
+                $stmt_link->execute();
+            }
+            $stmt_link->close();
+        }
+
+        // --- 3. Handle Files ---
+        $kept_files = isset($_POST['workFiles_json']) ? json_decode($_POST['workFiles_json'], true) : [];
+        $kept_filenames = array_map(fn($file) => $file['stored_name'], $kept_files);
+        $result_db_files = $conn->query("SELECT stored_filename FROM user_work_files WHERE user_account_id = $userId");
+        $db_filenames = [];
+        while ($row = $result_db_files->fetch_assoc()) {
+            $db_filenames[] = $row['stored_filename'];
+        }
+        $files_to_delete = array_diff($db_filenames, $kept_filenames);
+        $upload_dir = '../../../uploads/work_files/';
+        if (!empty($files_to_delete)) {
+            $stmt_del_file = $conn->prepare("DELETE FROM user_work_files WHERE user_account_id = ? AND stored_filename = ?");
+            foreach ($files_to_delete as $filename) {
+                if (file_exists($upload_dir . $filename)) {
+                    @unlink($upload_dir . $filename);
+                }
+                $stmt_del_file->bind_param("is", $userId, $filename);
+                $stmt_del_file->execute();
+            }
+            $stmt_del_file->close();
+        }
+        if (isset($_FILES['new_files'])) {
+            $stmt_ins_file = $conn->prepare("INSERT INTO user_work_files (user_account_id, original_filename, stored_filename, file_size) VALUES (?, ?, ?, ?)");
+            foreach ($_FILES['new_files']['name'] as $key => $name) {
+                if ($_FILES['new_files']['error'][$key] == 0) {
+                    $original_filename = $name;
+                    $file_size_mb = round($_FILES['new_files']['size'][$key] / (1024 * 1024), 2) . ' MB';
+                    $stored_filename = uniqid('user' . $userId . '_', true) . '.' . pathinfo($original_filename, PATHINFO_EXTENSION);
+                    if (move_uploaded_file($_FILES['new_files']['tmp_name'][$key], $upload_dir . $stored_filename)) {
+                        $stmt_ins_file->bind_param("isss", $userId, $original_filename, $stored_filename, $file_size_mb);
+                        $stmt_ins_file->execute();
+                    }
+                }
+            }
+            $stmt_ins_file->close();
+        }
+
+        $conn->commit();
+        $response = ['status' => 'success', 'message' => 'Portfolio Updated', 'description' => 'Your skills and portfolio have been saved.'];
+    } catch (Exception $e) {
+        $conn->rollback();
+        $response = ['status' => 'error', 'message' => 'Update Failed', 'description' => 'An error occurred while saving your data.'];
+    }
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit();
+}
+
+// --- DATA FETCHING for page display ---
+$skills_data = [];
+$result_skills = $conn->query("SELECT skill_name FROM user_skills WHERE user_account_id = $userId");
+while ($row = $result_skills->fetch_assoc()) {
+    $skills_data[] = $row['skill_name'];
+}
+$preferences_data = $conn->query("SELECT preferred_location, working_hours, hourly_rate, availability FROM user_preferences WHERE user_account_id = $userId")->fetch_assoc();
+if (!$preferences_data) {
+    $preferences_data = ['preferred_location' => 'Remote', 'working_hours' => 'Full-time (40+ hours/week)', 'hourly_rate' => 0, 'availability' => 'Available now'];
+}
+$experience_data = [];
+$result_exp = $conn->query("SELECT id, job_title as title, company_name as company, dates, responsibilities FROM user_work_experience WHERE user_account_id = $userId ORDER BY id DESC");
+while ($row = $result_exp->fetch_assoc()) {
+    $experience_data[] = $row;
+}
+$education_data = [];
+$result_edu = $conn->query("SELECT id, degree_or_certificate as degree, institution, year_of_completion as year FROM user_education WHERE user_account_id = $userId ORDER BY year_of_completion DESC");
+while ($row = $result_edu->fetch_assoc()) {
+    $education_data[] = $row;
+}
+$portfolio_data = [];
+$result_port = $conn->query("SELECT id, project_title as title, project_url as url, description FROM user_portfolio_links WHERE user_account_id = $userId");
+while ($row = $result_port->fetch_assoc()) {
+    $portfolio_data[] = $row;
+}
+$files_data = [];
+$result_files = $conn->query("SELECT id, original_filename as name, stored_filename as stored_name, file_size as size FROM user_work_files WHERE user_account_id = $userId");
+while ($row = $result_files->fetch_assoc()) {
+    $files_data[] = $row;
+}
